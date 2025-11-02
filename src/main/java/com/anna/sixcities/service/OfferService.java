@@ -13,7 +13,7 @@ public class OfferService {
     @Autowired
     private OfferDao offerDao;
 
-    public List<Offer> getOffers() {
-        return offerDao.getOffers();
+    public List<Offer> searchOffers() {
+        return offerDao.searchOffers();
     }
 }

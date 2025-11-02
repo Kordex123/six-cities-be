@@ -3,10 +3,12 @@ package com.anna.sixcities.model;
 public class Offer {
     private Integer id;
     private String title;
+    private Position position;
 
-    public Offer(Integer id, String title) {
+    public Offer(Integer id, String title, Position position) {
         this.id = id;
         this.title = title;
+        this.position = position;
     }
 
     public Integer getId() {
@@ -20,5 +22,11 @@ public class Offer {
     }
     public void setTitle(String title) {
         this.title = title;
+    }
+    public Position getPosition() {
+        return position;
+    }
+    public void setPosition(Position position) {
+        this.position = position;
     }
 }

@@ -1,0 +1,178 @@
+-- we don't know how to generate root <with-no-name> (class Root) :(
+
+    comment on database postgres is 'default administrative connection database';
+
+    create table amenity
+    (
+    id   bigserial
+    primary key,
+    name varchar(255) not null
+    );
+
+    alter table amenity
+    owner to postgres;
+
+    create table city
+    (
+    id    bigserial
+    primary key,
+    lat   numeric(10, 8) not null,
+    lng   numeric(11, 8) not null,
+    zoom  integer        not null,
+    title varchar(255)
+    );
+
+    alter table city
+    owner to postgres;
+
+    create table offer_type
+    (
+    id   bigserial
+    primary key,
+    name varchar(100) not null
+    );
+
+    alter table offer_type
+    owner to postgres;
+
+    create table offer
+    (
+    id            integer not null
+    primary key,
+    title         text,
+    price         numeric(10, 2),
+    lat           numeric(10, 6),
+    lng           numeric(10, 6),
+    city_id       bigint
+    constraint city_id
+    references city,
+    offer_type_id bigint
+    constraint offer_offer_type_id_fk
+    references offer_type,
+    rating        bigint,
+    description   text,
+    bedrooms      smallint,
+    max_adults    smallint
+    );
+
+    alter table offer
+    owner to postgres;
+
+    create table "user"
+    (
+    id       bigserial
+    primary key,
+    login    varchar(100) not null
+    unique,
+    password varchar(255) not null,
+    email    varchar(255) not null
+    unique
+    );
+
+    alter table "user"
+    owner to postgres;
+
+    create table permission
+    (
+    id   bigserial
+    primary key,
+    name varchar(100) not null
+    );
+
+    alter table permission
+    owner to postgres;
+
+    create table offer_amenity
+    (
+    offer_id   bigint not null
+    references offer
+    on delete cascade,
+    amenity_id bigint not null
+    references amenity
+    on delete cascade,
+    unique (offer_id, amenity_id)
+    );
+
+    alter table offer_amenity
+    owner to postgres;
+
+    create table favorite
+    (
+    offer_id bigint not null
+    references offer
+    on delete cascade,
+    user_id  bigint not null
+    references "user"
+    on delete cascade,
+    unique (offer_id, user_id)
+    );
+
+    alter table favorite
+    owner to postgres;
+
+    create table reservation
+    (
+    id         bigserial
+    primary key,
+    offer_id   bigint not null
+    references offer
+    on delete cascade,
+    user_id    bigint not null
+    references "user"
+    on delete cascade,
+    start_date date   not null,
+    end_date   date   not null
+    );
+
+    alter table reservation
+    owner to postgres;
+
+    create table review
+    (
+    id          bigserial
+    primary key,
+    offer_id    bigint  not null
+    references offer
+    on delete cascade,
+    user_id     bigint  not null
+    references "user"
+    on delete cascade,
+    description text,
+    rating      integer not null
+    constraint review_rating_check
+    check ((rating >= 1) AND (rating <= 5))
+    );
+
+    alter table review
+    owner to postgres;
+
+    create table image
+    (
+    id       bigserial
+    primary key,
+    name     varchar(255) not null,
+    offer_id bigint       not null
+    constraint fk_image_offer
+    references offer
+    on delete cascade
+    );
+
+    alter table image
+    owner to postgres;
+
+    create table user_permission
+    (
+    user_id       bigint not null
+    constraint fk_user_permission_user
+    references "user"
+    on delete cascade,
+    permission_id bigint not null
+    constraint fk_user_permission_permission
+    references permission
+    on delete cascade,
+    primary key (user_id, permission_id)
+    );
+
+    alter table user_permission
+    owner to postgres;
+
