@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rozwiązanie v_offer z is_favorite - Wszystkie opcje</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+        }
+        .code-block {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .filename {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+            margin-bottom: -5px;
+            display: inline-block;
+        }
+        .note {
+            background-color: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .advantages {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .disadvantages {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        ul {
+            margin: 10px 0;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .comparison {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .best {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<h1>Rozwiązanie v_offer z is_favorite - Wszystkie opcje</h1>
+
+<div class="note">
+    <strong>🎯 Problem:</strong> Jak dodać kolumnę <code>is_favorite</code> do widoku v_offer bez duplikowania wierszy, gdy wielu użytkowników ma tę samą ofertę w ulubionych?
+    <br><br>
+    <strong>💡 Kontekst:</strong> W systemie jest więcej użytkowników niż ofert (jak w Airbnb, Booking, etc.)
+</div>
+
+<!-- OPCJA 1 -->
+<h2>Opcja 1: EXISTS - ogólna informacja (czy KTOKOLWIEK ma w ulubionych)</h2>
+
+<div class="warning">
+    <strong>⚠️ Uwaga:</strong> Ta opcja pokazuje czy oferta jest w <strong>czyichkolwiek</strong> ulubionych, nie dla konkretnego użytkownika!
+</div>
+
+<div class="filename">database/views/v_offer</div>
+<div class="code-block">
+<pre>create or replace view v_offer
+                (id, title, price, lat, lng, rating, description, bedrooms, max_adults, city_id, city_title, city_lat,
+                 city_lng, city_zoom, offer_type_id, offer_type_name, preview_image, is_favorite)
+as
+SELECT o.id,
+       o.title,
+       o.price,
+       o.lat,
+       o.lng,
+       o.rating,
+       o.description,
+       o.bedrooms,
+       o.max_adults,
+       c.id    AS city_id,
+       c.title AS city_title,
+       c.lat   AS city_lat,
+       c.lng   AS city_lng,
+       c.zoom  AS city_zoom,
+       ot.id   AS offer_type_id,
+       ot.name AS offer_type_name,
+       i.name AS preview_image,
+       CASE WHEN EXISTS (SELECT 1 FROM favorite f WHERE f.offer_id = o.id)
+            THEN 1 ELSE 0 END AS is_favorite
+FROM offer o
+         LEFT JOIN city c ON o.city_id = c.id
+         LEFT JOIN offer_type ot ON o.offer_type_id = ot.id
+         LEFT JOIN image i ON o.id = i.offer_id AND i.type = 'preview';</pre>
+</div>
+
+<div class="advantages">
+    <h4>✅ Zalety:</h4>
+    <ul>
+        <li>Brak duplikatów wierszy</li>
+        <li>Prosty widok</li>
+        <li>Wydajne zapytanie z EXISTS</li>
+    </ul>
+</div>
+
+<div class="disadvantages">
+    <h4>❌ Wady:</h4>
+    <ul>
+        <li><strong>Nie pokazuje informacji dla konkretnego użytkownika</strong></li>
+        <li>Mało przydatne w rzeczywistych zastosowaniach</li>
+        <li>Użytkownik widzi "ulubione" nawet jeśli to nie jego ulubione</li>
+    </ul>
+</div>
+
+<!-- OPCJA 2 -->
+<h2>Opcja 2: LEFT JOIN z user_id w widoku</h2>
+
+<div class="warning">
+    <strong>⚠️ Uwaga:</strong> Ta opcja powoduje <strong>duplikację wierszy</strong> w widoku!
+</div>
+
+<div class="filename">database/views/v_offer</div>
+<div class="code-block">
+<pre>create or replace view v_offer
+                (id, title, price, lat, lng, rating, description, bedrooms, max_adults, city_id, city_title, city_lat,
+                 city_lng, city_zoom, offer_type_id, offer_type_name, preview_image, user_id, is_favorite)
+as
+SELECT o.id,
+       o.title,
+       o.price,
+       o.lat,
+       o.lng,
+       o.rating,
+       o.description,
+       o.bedrooms,
+       o.max_adults,
+       c.id    AS city_id,
+       c.title AS city_title,
+       c.lat   AS city_lat,
+       c.lng   AS city_lng,
+       c.zoom  AS city_zoom,
+       ot.id   AS offer_type_id,
+       ot.name AS offer_type_name,
+       i.name AS preview_image,
+       f.user_id,
+       CASE WHEN f.offer_id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
+FROM offer o
+         LEFT JOIN city c ON o.city_id = c.id
+         LEFT JOIN offer_type ot ON o.offer_type_id = ot.id
+         LEFT JOIN image i ON o.id = i.offer_id AND i.type = 'preview'
+         LEFT JOIN favorite f ON o.id = f.offer_id;</pre>
+</div>
+
+<h3>Użycie w DAO:</h3>
+<div class="filename">src/main/java/com/anna/sixcities/dao/OfferDao.java</div>
+<div class="code-block">
+<pre>public List&lt;Offer&gt; searchOffers(Long userId) {
+    String sql = "SELECT * FROM V_OFFER WHERE user_id = ? OR user_id IS NULL ORDER BY ID";
+    List&lt;Map&lt;String,Object&gt;&gt; offerMapList = jdbcTemplate.queryForList(sql, userId);
+    // ... mapping ...
+}</pre>
+</div>
+
+<div class="advantages">
+    <h4>✅ Zalety:</h4>
+    <ul>
+        <li>Pokazuje informację dla konkretnego użytkownika</li>
+        <li>Wszystko w widoku</li>
+    </ul>
+</div>
+
+<div class="disadvantages">
+    <h4>❌ Wady:</h4>
+    <ul>
+        <li><strong>DUPLIKACJA WIERSZY w widoku!</strong> Jeśli 2 użytkowników ma ofertę w ulubionych, będą 2 wiersze</li>
+        <li>Widok zawiera dane wszystkich użytkowników (problem prywatności)</li>
+        <li>Marnowanie miejsca w pamięci/cache</li>
+        <li>Konieczność filtrowania po user_id w każdym zapytaniu</li>
+    </ul>
+</div>
+
+<!-- OPCJA 3 -->
+<h2>Opcja 3: Parametryzowane zapytanie w DAO ⭐ NAJLEPSZA</h2>
+
+<div class="note">
+    <strong>💡 Podejście:</strong> Widok pozostaje prosty bez <code>is_favorite</code>, a flaga jest dodawana dynamicznie w DAO dla konkretnego użytkownika.
+</div>
+
+<h3>1. Widok v_offer (bez is_favorite)</h3>
+<div class="filename">database/views/v_offer</div>
+<div class="code-block">
+<pre>create or replace view v_offer
+                (id, title, price, lat, lng, rating, description, bedrooms, max_adults, city_id, city_title, city_lat,
+                 city_lng, city_zoom, offer_type_id, offer_type_name, preview_image)
+as
+SELECT o.id,
+       o.title,
+       o.price,
+       o.lat,
+       o.lng,
+       o.rating,
+       o.description,
+       o.bedrooms,
+       o.max_adults,
+       c.id    AS city_id,
+       c.title AS city_title,
+       c.lat   AS city_lat,
+       c.lng   AS city_lng,
+       c.zoom  AS city_zoom,
+       ot.id   AS offer_type_id,
+       ot.name AS offer_type_name,
+       i.name AS preview_image
+FROM offer o
+         LEFT JOIN city c ON o.city_id = c.id
+         LEFT JOIN offer_type ot ON o.offer_type_id = ot.id
+         LEFT JOIN image i ON o.id = i.offer_id AND i.type = 'preview';</pre>
+</div>
+
+<h3>2. OfferDao z dynamicznym is_favorite</h3>
+<div class="filename">src/main/java/com/anna/sixcities/dao/OfferDao.java</div>
+<div class="code-block">
+<pre>public List&lt;Offer&gt; searchOffers(Long userId) {
+    String sql = """
+        SELECT v.*,
+               CASE WHEN f.offer_id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
+        FROM V_OFFER v
+        LEFT JOIN favorite f ON v.id = f.offer_id AND f.user_id = ?
+        ORDER BY v.id
+        """;
+
+    List&lt;Map&lt;String,Object&gt;&gt; offerMapList = jdbcTemplate.queryForList(sql, userId);
+    return offerMapList.stream().map(offerMap -&gt; {
+        Offer offer = new Offer();
+        offer.setId((Integer) offerMap.get("id"));
+        offer.setTitle((String) offerMap.get("title"));
+        offer.setPrice((BigDecimal) offerMap.get("price"));
+        offer.setPosition(new Position((BigDecimal) offerMap.get("lat"), (BigDecimal) offerMap.get("lng")));
+        offer.setRating((Integer) offerMap.get("rating"));
+        offer.setDescription((String) offerMap.get("description"));
+        offer.setBedrooms((Integer) offerMap.get("bedrooms"));
+        offer.setMaxAdults((Integer) offerMap.get("max_adults"));
+        offer.setPreviewImage((String) offerMap.get("preview_image"));
+        offer.setIsFavorite((Integer) offerMap.get("is_favorite"));
+
+        offer.setImages(imageDao.searchImages().stream()
+            .filter(image -&gt; image.getOfferId() == offerMap.get("id")).toList());
+        offer.setGoods(List.of());
+
+        City city = new City();
+        city.setTitle((String) offerMap.get("city_title"));
+        city.setId((Long) offerMap.get("city_id"));
+        offer.setCity(city);
+
+        return offer;
+    }).toList();
+}</pre>
+</div>
+
+<div class="advantages">
+    <h3>✅ Zalety:</h3>
+    <ul>
+        <li><strong>Brak duplikatów</strong> - każda oferta występuje tylko raz w wynikach</li>
+        <li><strong>Personalizacja</strong> - <code>is_favorite</code> jest obliczane dla konkretnego zalogowanego użytkownika</li>
+        <li><strong>Wydajność</strong> - jeden JOIN z warunkiem na <code>user_id</code></li>
+        <li><strong>Czysty widok</strong> - widok pozostaje niezależny od logiki użytkowników</li>
+        <li><strong>Elastyczność</strong> - łatwo można dodać inne parametry użytkownika w przyszłości</li>
+        <li><strong>Prywatność</strong> - widok nie zawiera danych o preferencjach użytkowników</li>
+        <li><strong>Optymalizacja</strong> - baza nie przechowuje niepotrzebnych duplikatów</li>
+    </ul>
+</div>
+
+<div class="note">
+    <h3>📋 Wyjaśnienie kluczowego fragmentu:</h3>
+    <p><code><strong>LEFT JOIN favorite f ON v.id = f.offer_id AND f.user_id = ?</strong></code></p>
+    <p>Warunek <code>AND f.user_id = ?</code> w JOIN zapewnia, że sprawdzamy czy <strong>konkretny użytkownik</strong> ma daną ofertę w ulubionych.</p>
+    <ul>
+        <li>Jeśli TAK → <code>f.offer_id</code> będzie NOT NULL → <code>is_favorite = 1</code></li>
+        <li>Jeśli NIE → <code>f.offer_id</code> będzie NULL → <code>is_favorite = 0</code></li>
+    </ul>
+</div>
+
+<!-- PORÓWNANIE -->
+<div class="comparison">
+    <h2 style="background: none; color: #2c3e50; padding: 0;">📊 Porównanie opcji</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Cecha</th>
+            <th>Opcja 1 (EXISTS)</th>
+            <th>Opcja 2 (user_id w widoku)</th>
+            <th class="best">Opcja 3 (DAO) ⭐</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><strong>Duplikaty wierszy</strong></td>
+            <td style="background-color: #d4edda;">✅ Brak</td>
+            <td style="background-color: #f8d7da;">❌ Są duplikaty</td>
+            <td class="best">✅ Brak</td>
+        </tr>
+        <tr>
+            <td><strong>Personalizacja</strong></td>
+            <td style="background-color: #f8d7da;">❌ Dla wszystkich</td>
+            <td style="background-color: #d4edda;">✅ Dla użytkownika</td>
+            <td class="best">✅ Dla użytkownika</td>
+        </tr>
+        <tr>
+            <td><strong>Wydajność</strong></td>
+            <td style="background-color: #d4edda;">✅ Dobra</td>
+            <td style="background-color: #fff3cd;">⚠️ Średnia</td>
+            <td class="best">✅ Doskonała</td>
+        </tr>
+        <tr>
+            <td><strong>Prywatność</strong></td>
+            <td style="background-color: #d4edda;">✅ OK</td>
+            <td style="background-color: #f8d7da;">❌ Problem</td>
+            <td class="best">✅ Bezpieczna</td>
+        </tr>
+        <tr>
+            <td><strong>Łatwość użycia</strong></td>
+            <td style="background-color: #d4edda;">✅ Prosta</td>
+            <td style="background-color: #fff3cd;">⚠️ Średnia</td>
+            <td class="best">✅ Prosta</td>
+        </tr>
+        <tr>
+            <td><strong>Elastyczność</strong></td>
+            <td style="background-color: #fff3cd;">⚠️ Ograniczona</td>
+            <td style="background-color: #fff3cd;">⚠️ Średnia</td>
+            <td class="best">✅ Wysoka</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="advantages" style="margin-top: 30px;">
+    <h2 style="margin-top: 0; color: #155724;">🏆 Rekomendacja: Opcja 3</h2>
+    <p><strong>Opcja 3 (Parametryzowane zapytanie w DAO)</strong> jest najlepszym rozwiązaniem, ponieważ:</p>
+    <ul>
+        <li>Łączy w sobie wszystkie zalety pozostałych opcji</li>
+        <li>Nie ma żadnych istotnych wad</li>
+        <li>Jest zgodna z best practices (separation of concerns)</li>
+        <li>Skalowalna dla większej liczby użytkowników</li>
+        <li>Łatwa w utrzymaniu i rozbudowie</li>
+    </ul>
+</div>
+
+</body>
+</html>

@@ -14,6 +14,14 @@ import java.util.Map;
 @Component
 public class OfferDao {
 
+    private static final String FAVORITE_OFFER_QUERY = """
+        SELECT v.*,
+               CASE WHEN f.offer_id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
+        FROM V_OFFER v
+        LEFT JOIN favorite f ON v.id = f.offer_id AND f.user_id = ?
+        ORDER BY v.id
+        """;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -21,7 +29,7 @@ public class OfferDao {
     private ImageDao imageDao;
 
     public List<Offer> searchOffers() {
-        List<Map<String,Object>> offerMapList = jdbcTemplate.queryForList("SELECT * FROM V_OFFER ORDER BY ID");
+        List<Map<String,Object>> offerMapList = jdbcTemplate.queryForList(FAVORITE_OFFER_QUERY, 1);
         return offerMapList.stream().map(offerMap -> {
             Offer offer = new Offer();
             offer.setId((Integer) offerMap.get("id"));
@@ -33,7 +41,7 @@ public class OfferDao {
             offer.setBedrooms((Integer) offerMap.get("bedrooms"));
             offer.setMaxAdults((Integer) offerMap.get("max_adults"));
             offer.setPreviewImage((String) offerMap.get("preview_image"));
-
+            offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
             offer.setImages(imageDao.searchImages().stream().filter(image -> image.getOfferId() == offerMap.get("id")).toList());
             offer.setGoods(List.of());
             City city = new City();

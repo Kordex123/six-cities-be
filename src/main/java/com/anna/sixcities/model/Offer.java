@@ -16,6 +16,7 @@ public class Offer {
     private String previewImage;
     private List<Image> images;
     private List<String> goods;
+    private boolean isFavorite;
 
     public Offer() { }
 
@@ -97,4 +98,12 @@ public class Offer {
     public void setGoods(List<String> goods) {
         this.goods = goods;
     }
+
+    public void setIsFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+    public boolean getIsFavorite() {
+        return isFavorite;
+    }
 }
+
