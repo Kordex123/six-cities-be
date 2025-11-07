@@ -13,7 +13,7 @@ public class Offer {
     private Integer bedrooms;
     private Integer maxAdults;
     private City city;
-    private String previewImage;
+    private Image previewImage;
     private List<Image> images;
     private List<String> goods;
     private boolean isFavorite;
@@ -79,10 +79,10 @@ public class Offer {
     public void setCity(City city) {
         this.city = city;
     }
-    public String getPreviewImage() {
+    public Image getPreviewImage() {
         return previewImage;
     }
-    public void setPreviewImage(String previewImage) {
+    public void setPreviewImage(Image previewImage) {
         this.previewImage = previewImage;
     }
     public List<Image> getImages() {

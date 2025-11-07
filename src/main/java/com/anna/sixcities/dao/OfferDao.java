@@ -1,6 +1,7 @@
 package com.anna.sixcities.dao;
 
 import com.anna.sixcities.model.City;
+import com.anna.sixcities.model.Image;
 import com.anna.sixcities.model.Offer;
 import com.anna.sixcities.model.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,9 @@ public class OfferDao {
             offer.setDescription((String) offerMap.get("description"));
             offer.setBedrooms((Integer) offerMap.get("bedrooms"));
             offer.setMaxAdults((Integer) offerMap.get("max_adults"));
-            offer.setPreviewImage((String) offerMap.get("preview_image"));
+            offer.setPreviewImage(new Image((String) offerMap.get("preview_image")));
             offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
-            offer.setImages(imageDao.searchImages().stream().filter(image -> image.getOfferId() == offerMap.get("id")).toList());
+            offer.setImages(imageDao.searchImages().stream().filter(image ->image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
             offer.setGoods(List.of());
             City city = new City();
             city.setTitle((String) offerMap.get("city_title"));

@@ -6,6 +6,10 @@ public class Image {
 
     public Image() { }
 
+    public Image(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
