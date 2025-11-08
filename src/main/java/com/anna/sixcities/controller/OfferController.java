@@ -3,10 +3,7 @@ package com.anna.sixcities.controller;
 import com.anna.sixcities.model.Offer;
 import com.anna.sixcities.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +18,15 @@ public class OfferController {
     @GetMapping("/search")
     public List<Offer> searchOffers() {
         return offerService.searchOffers();
+    }
+
+    @PostMapping("/favorite/add")
+    public void addFavorite(@RequestParam Integer offerId, @RequestParam Integer userId) {
+        offerService.addFavorite(offerId, userId);
+    }
+
+    @DeleteMapping("/favorite/delete")
+    public void deleteFavorite(@RequestParam Integer offerId, @RequestParam Integer userId) {
+        offerService.deleteFavorite(offerId, userId);
     }
 }

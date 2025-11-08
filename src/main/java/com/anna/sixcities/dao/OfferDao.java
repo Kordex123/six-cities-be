@@ -52,4 +52,12 @@ public class OfferDao {
             return offer;
         }).toList();
     }
+
+    public void addFavorite(Integer offerId, Integer userId) {
+        jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, userId);
+    }
+
+    public void deleteFavorite(Integer offerId, Integer userId) {
+        jdbcTemplate.update("DELETE FROM favorite WHERE offer_id = ? AND user_id = ?", offerId, userId);
+    }
 }

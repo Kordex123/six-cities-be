@@ -16,4 +16,12 @@ public class OfferService {
     public List<Offer> searchOffers() {
         return offerDao.searchOffers();
     }
+
+    public void addFavorite(Integer offerId, Integer userId) {
+        offerDao.addFavorite(offerId, userId);
+    }
+
+    public void deleteFavorite(Integer offerId, Integer userId) {
+        offerDao.deleteFavorite(offerId, userId);
+    }
 }
