@@ -1,8 +1,10 @@
 package com.anna.sixcities.controller;
 
+import com.anna.sixcities.model.Favorite;
 import com.anna.sixcities.model.Offer;
 import com.anna.sixcities.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +23,14 @@ public class OfferController {
     }
 
     @PostMapping("/favorite/add")
-    public void addFavorite(@RequestParam Integer offerId, @RequestParam Integer userId) {
+    public Favorite addFavorite(@RequestParam Long offerId, @RequestParam Long userId) {
         offerService.addFavorite(offerId, userId);
+        return new Favorite(offerId, userId);
     }
 
     @DeleteMapping("/favorite/delete")
-    public void deleteFavorite(@RequestParam Integer offerId, @RequestParam Integer userId) {
+    public Favorite deleteFavorite(@RequestParam Long offerId, @RequestParam Long userId) {
         offerService.deleteFavorite(offerId, userId);
+        return new Favorite(offerId, userId);
     }
 }

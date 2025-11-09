@@ -17,11 +17,11 @@ public class OfferService {
         return offerDao.searchOffers();
     }
 
-    public void addFavorite(Integer offerId, Integer userId) {
+    public void addFavorite(Long offerId, Long userId) {
         offerDao.addFavorite(offerId, userId);
     }
 
-    public void deleteFavorite(Integer offerId, Integer userId) {
+    public void deleteFavorite(Long offerId, Long userId) {
         offerDao.deleteFavorite(offerId, userId);
     }
 }

@@ -15,8 +15,9 @@ public class Offer {
     private City city;
     private Image previewImage;
     private List<Image> images;
-    private List<String> goods;
+    private List<Amenity> amenities;
     private boolean isFavorite;
+    private String type;
 
     public Offer() { }
 
@@ -73,6 +74,14 @@ public class Offer {
 
         this.maxAdults = maxAdults;
     }
+
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public City getCity() {
         return city;
     }
@@ -92,11 +101,11 @@ public class Offer {
         this.images = images;
     }
 
-    public List<String> getGoods() {
-        return goods;
+    public List<Amenity> getAmenities() {
+        return amenities;
     }
-    public void setGoods(List<String> goods) {
-        this.goods = goods;
+    public void setAmenities(List<Amenity> amenities) {
+        this.amenities = amenities;
     }
 
     public void setIsFavorite(boolean isFavorite) {

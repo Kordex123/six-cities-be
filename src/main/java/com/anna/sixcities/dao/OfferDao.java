@@ -1,9 +1,6 @@
 package com.anna.sixcities.dao;
 
-import com.anna.sixcities.model.City;
-import com.anna.sixcities.model.Image;
-import com.anna.sixcities.model.Offer;
-import com.anna.sixcities.model.Position;
+import com.anna.sixcities.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -29,9 +26,12 @@ public class OfferDao {
     @Autowired
     private ImageDao imageDao;
 
+    @Autowired
+    private AmenityDao amenityDao;
+
     public List<Offer> searchOffers() {
         List<Map<String,Object>> offerMapList = jdbcTemplate.queryForList(FAVORITE_OFFER_QUERY, 1);
-        return offerMapList.stream().map(offerMap -> {
+        List<Offer> result = offerMapList.stream().map(offerMap -> {
             Offer offer = new Offer();
             offer.setId((Integer) offerMap.get("id"));
             offer.setTitle((String) offerMap.get("title"));
@@ -41,23 +41,25 @@ public class OfferDao {
             offer.setDescription((String) offerMap.get("description"));
             offer.setBedrooms((Integer) offerMap.get("bedrooms"));
             offer.setMaxAdults((Integer) offerMap.get("max_adults"));
+            offer.setType((String) offerMap.get("offer_type_name"));
             offer.setPreviewImage(new Image((String) offerMap.get("preview_image")));
             offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
             offer.setImages(imageDao.searchImages().stream().filter(image ->image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
-            offer.setGoods(List.of());
+            offer.setAmenities(amenityDao.searchAmenities().stream().filter(amenity -> amenity.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
             City city = new City();
             city.setTitle((String) offerMap.get("city_title"));
             city.setId((Long) offerMap.get("city_id"));
             offer.setCity(city);
             return offer;
         }).toList();
+        return result;
     }
 
-    public void addFavorite(Integer offerId, Integer userId) {
+    public void addFavorite(Long offerId, Long userId) {
         jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, userId);
     }
 
-    public void deleteFavorite(Integer offerId, Integer userId) {
+    public void deleteFavorite(Long offerId, Long userId) {
         jdbcTemplate.update("DELETE FROM favorite WHERE offer_id = ? AND user_id = ?", offerId, userId);
     }
 }
