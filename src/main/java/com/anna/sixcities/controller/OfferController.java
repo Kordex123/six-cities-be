@@ -4,7 +4,6 @@ import com.anna.sixcities.model.Favorite;
 import com.anna.sixcities.model.Offer;
 import com.anna.sixcities.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,4 +32,4 @@ public class OfferController {
         offerService.deleteFavorite(offerId, userId);
         return new Favorite(offerId, userId);
     }
-}
+ }
