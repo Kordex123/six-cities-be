@@ -15,7 +15,7 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public List<Review> searchReview(@RequestBody Review review) {
         return reviewService.searchReview(review);
     }

@@ -27,10 +27,10 @@ public class ReviewDao {
         if (reviewFilter.getUserId() != null) {
             query += " AND USER_ID = " + reviewFilter.getUserId();
         }
-        if (reviewFilter.getUserId() != null) {
-            query += " AND DESCRIPTION = " + reviewFilter.getDescription();
+        if (reviewFilter.getDescription() != null) {
+            query += " AND DESCRIPTION LIKE '%" + reviewFilter.getDescription() + "%'";
         }
-        if (reviewFilter.getUserId() != null) {
+        if (reviewFilter.getRating() != null) {
             query += " AND RATING = " + reviewFilter.getRating();
         }
 
