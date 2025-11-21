@@ -1,0 +1,19 @@
+create table offer
+(
+    id            integer not null
+        primary key,
+    title         text,
+    price         numeric(10, 2),
+    lat           numeric(10, 6),
+    lng           numeric(10, 6),
+    city_id       bigint
+        constraint city_id
+            references city,
+    offer_type_id bigint
+        constraint offer_offer_type_id_fk
+            references offer_type,
+    rating        smallint,
+    description   text,
+    bedrooms      smallint,
+    max_adults    smallint
+);

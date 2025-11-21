@@ -8,7 +8,7 @@ public class Offer {
     private String title;
     private BigDecimal price;
     private Position position;
-    private Integer rating;
+    private BigDecimal rating;
     private String description;
     private Integer bedrooms;
     private Integer maxAdults;
@@ -46,10 +46,10 @@ public class Offer {
 
         this.position = position;
     }
-    public Integer getRating() {
+    public BigDecimal getRating() {
         return rating;
     }
-    public void setRating(Integer rating) {
+    public void setRating(BigDecimal rating) {
 
         this.rating = rating;
     }

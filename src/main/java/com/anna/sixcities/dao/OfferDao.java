@@ -18,6 +18,7 @@ public class OfferDao {
         FROM V_OFFER v
         LEFT JOIN favorite f ON v.id = f.offer_id AND f.user_id = ?
         ORDER BY v.id
+        LIMIT 100
         """;
 
     @Autowired
@@ -31,21 +32,23 @@ public class OfferDao {
 
     public List<Offer> searchOffers() {
         List<Map<String,Object>> offerMapList = jdbcTemplate.queryForList(FAVORITE_OFFER_QUERY, 1);
+        List<Image> images = imageDao.searchImages();
+        List<Amenity> amenities = amenityDao.searchAmenities();
         List<Offer> result = offerMapList.stream().map(offerMap -> {
             Offer offer = new Offer();
             offer.setId((Integer) offerMap.get("id"));
             offer.setTitle((String) offerMap.get("title"));
             offer.setPrice((BigDecimal) offerMap.get("price"));
             offer.setPosition(new Position((BigDecimal) offerMap.get("lat"), (BigDecimal) offerMap.get("lng")));
-            offer.setRating((Integer) offerMap.get("rating"));
+            offer.setRating((BigDecimal) offerMap.get("rating"));
             offer.setDescription((String) offerMap.get("description"));
             offer.setBedrooms((Integer) offerMap.get("bedrooms"));
             offer.setMaxAdults((Integer) offerMap.get("max_adults"));
             offer.setType((String) offerMap.get("offer_type_name"));
             offer.setPreviewImage(new Image((String) offerMap.get("preview_image")));
             offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
-            offer.setImages(imageDao.searchImages().stream().filter(image ->image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
-            offer.setAmenities(amenityDao.searchAmenities().stream().filter(amenity -> amenity.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
+            offer.setImages(images.stream().filter(image ->image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
+            offer.setAmenities(amenities.stream().filter(amenity -> amenity.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
             City city = new City();
             city.setTitle((String) offerMap.get("city_title"));
             city.setId((Long) offerMap.get("city_id"));

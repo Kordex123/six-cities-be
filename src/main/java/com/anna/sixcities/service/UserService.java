@@ -30,4 +30,16 @@ public class UserService {
     public void updateUser(User user) {
         userDao.updateUser(user);
     }
+
+    public User login(User user) {
+        if (user == null || user.getEmail() == null || user.getPassword() == null) {
+            throw new IllegalArgumentException("Empty email or password");
+        }
+        User dbUser = userDao.getUserByEmail(user.getEmail());
+        if (dbUser != null && dbUser.getPassword().equals(user.getPassword())) {
+            return dbUser;
+        } else {
+            throw new IllegalArgumentException("Wrong email or password");
+        }
+    }
 }

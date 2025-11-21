@@ -23,3 +23,17 @@ FROM offer o
          LEFT JOIN city c ON o.city_id = c.id
          LEFT JOIN offer_type ot ON o.offer_type_id = ot.id
          LEFT JOIN image i ON o.id = i.offer_id AND i.type = 'preview';
+
+alter table v_offer
+    owner to postgres;
+
+UPDATE offer o
+SET rating = r.avg_rating
+FROM (
+    SELECT
+        offer_id,
+        ROUND(AVG(rating)::numeric, 1) AS avg_rating
+    FROM review
+    GROUP BY offer_id
+) r
+WHERE o.id = r.offer_id;

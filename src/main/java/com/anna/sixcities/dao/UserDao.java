@@ -17,8 +17,7 @@ public class UserDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public User getUserByLogin(String login) {
-        Map<String, Object> userMap = jdbcTemplate.queryForMap(USER_QUERY, login);
+    private static User getUser(Map<String, Object> userMap) {
         User user = new User();
         user.setId(((Number) userMap.get("id")).longValue());
         user.setLogin((String) userMap.get("login"));
@@ -27,6 +26,17 @@ public class UserDao {
         user.setFirstName((String) userMap.get("first_name"));
         user.setLastName((String) userMap.get("last_name"));
         return user;
+    }
+
+    public User getUserByLogin(String login) {
+        Map<String, Object> userMap = jdbcTemplate.queryForMap(USER_QUERY, login);
+        return getUser(userMap);
+    }
+
+
+    public User getUserByEmail(String email) {
+        Map<String, Object> userMap = jdbcTemplate.queryForMap("SELECT * FROM app_user WHERE email = ?", email);
+        return getUser(userMap);
     }
 
     public void addUser(User user) {
@@ -43,4 +53,5 @@ public class UserDao {
                 user.getLogin(), user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getId());
 
     }
+
 }

@@ -11,4 +11,12 @@ public class ImageService {
     public Resource getImage(String imageName) {
         return new ClassPathResource("/images/" + ObjectUtil.getImageNumber(imageName) + ".jpg");
     }
+
+    public Resource getAvatar(String avatarName) {
+        Resource avatar = new ClassPathResource("/avatar/" + avatarName);
+        if (avatar.exists()) {
+            return avatar;
+        }
+        return new ClassPathResource("/avatar/avatar.svg");
+    }
 }

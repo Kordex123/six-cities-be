@@ -10,19 +10,28 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins="http://localhost:5173")
 @RestController
-@RequestMapping("/image")
 public class ImageController {
 
     @Autowired
     private ImageService imageService;
 
-    @GetMapping("/{imageName}.jpg")
+    @GetMapping("/image/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
         Resource image = imageService.getImage(imageName);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + imageName + "\"")
+                .body(image);
+    }
+
+    @GetMapping("/avatar/{avatarName}")
+    public ResponseEntity<Resource> getAvatar(@PathVariable String avatarName) {
+        Resource image = imageService.getAvatar(avatarName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("image/svg+xml"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + avatarName + "\"")
                 .body(image);
     }
 }
