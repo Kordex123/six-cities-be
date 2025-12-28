@@ -16,7 +16,8 @@ public class OfferDao {
         SELECT v.*,
                CASE WHEN f.offer_id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
         FROM V_OFFER v
-        LEFT JOIN favorite f ON v.id = f.offer_id AND f.user_id = ?
+        LEFT JOIN favorite f ON v.id = f.offer_id AND f.user_id = ? 
+        WHERE v.city_title = COALESCE(?, v.city_title)
         ORDER BY v.id
         LIMIT 100
         """;
@@ -30,8 +31,8 @@ public class OfferDao {
     @Autowired
     private AmenityDao amenityDao;
 
-    public List<Offer> searchOffers() {
-        List<Map<String,Object>> offerMapList = jdbcTemplate.queryForList(FAVORITE_OFFER_QUERY, 1);
+    public List<Offer> searchOffers(String city) {
+        List<Map<String,Object>> offerMapList = jdbcTemplate.queryForList(FAVORITE_OFFER_QUERY, 1, city);
         List<Image> images = imageDao.searchImages();
         List<Amenity> amenities = amenityDao.searchAmenities();
         List<Offer> result = offerMapList.stream().map(offerMap -> {
@@ -49,10 +50,10 @@ public class OfferDao {
             offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
             offer.setImages(images.stream().filter(image ->image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
             offer.setAmenities(amenities.stream().filter(amenity -> amenity.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
-            City city = new City();
-            city.setTitle((String) offerMap.get("city_title"));
-            city.setId((Long) offerMap.get("city_id"));
-            offer.setCity(city);
+            City offerCity = new City();
+            offerCity.setTitle((String) offerMap.get("city_title"));
+            offerCity.setId((Long) offerMap.get("city_id"));
+            offer.setCity(offerCity);
             return offer;
         }).toList();
         return result;

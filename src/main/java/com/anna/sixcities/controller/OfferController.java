@@ -17,8 +17,8 @@ public class OfferController {
     private OfferService offerService;
 
     @GetMapping("/search")
-    public List<Offer> searchOffers() {
-        return offerService.searchOffers();
+    public List<Offer> searchOffers(@RequestParam(required = false) String city) {
+        return offerService.searchOffers(city);
     }
 
     @PostMapping("/favorite/add")

@@ -13,8 +13,8 @@ public class OfferService {
     @Autowired
     private OfferDao offerDao;
 
-    public List<Offer> searchOffers() {
-        return offerDao.searchOffers();
+    public List<Offer> searchOffers(String city) {
+        return offerDao.searchOffers(city);
     }
 
     public void addFavorite(Long offerId, Long userId) {
