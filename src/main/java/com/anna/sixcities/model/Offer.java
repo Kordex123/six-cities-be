@@ -18,6 +18,8 @@ public class Offer {
     private List<Amenity> amenities;
     private boolean isFavorite;
     private String type;
+    private Integer children;
+    private boolean hasPets;
 
     public Offer() { }
 
@@ -113,6 +115,19 @@ public class Offer {
     }
     public boolean getIsFavorite() {
         return isFavorite;
+    }
+
+    public Integer getChildren() {
+        return children;
+    }
+    public void setChildren(Integer children) {
+        this.children = children;
+    }
+    public boolean getHasPets() {
+        return hasPets;
+    }
+    public void setHasPets(boolean hasPets) {
+        this.hasPets = hasPets;
     }
 }
 

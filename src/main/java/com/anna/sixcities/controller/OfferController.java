@@ -2,6 +2,7 @@ package com.anna.sixcities.controller;
 
 import com.anna.sixcities.model.Favorite;
 import com.anna.sixcities.model.Offer;
+import com.anna.sixcities.model.OfferSearchCriteria;
 import com.anna.sixcities.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class OfferController {
     private OfferService offerService;
 
     @GetMapping("/search")
-    public List<Offer> searchOffers(@RequestParam(required = false) String city) {
-        return offerService.searchOffers(city);
+    public List<Offer> searchOffers(OfferSearchCriteria criteria) {
+        return offerService.searchOffers(criteria);
     }
 
     @PostMapping("/favorite/add")
