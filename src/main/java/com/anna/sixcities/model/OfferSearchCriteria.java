@@ -1,12 +1,21 @@
 package com.anna.sixcities.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
+
 public class OfferSearchCriteria {
 
     private String city;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    private LocalDate checkIn;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    private LocalDate checkOut;
     private Integer adults;
     private Integer children;
     private Integer rooms;
     private Boolean hasPets;
+    
 
     public String getCity() {
         return city;
@@ -14,6 +23,22 @@ public class OfferSearchCriteria {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public LocalDate getCheckIn() {
+        return checkIn;
+    }
+
+    public void setCheckIn(LocalDate checkIn) {
+        this.checkIn = checkIn;
+    }
+
+    public LocalDate getCheckOut() {
+        return checkOut;
+    }
+
+    public void setCheckOut(LocalDate checkOut) {
+        this.checkOut = checkOut;
     }
 
     public Integer getAdults() {

@@ -22,6 +22,11 @@ public class OfferDao {
             AND v.children >= COALESCE(?, v.children)
             AND v.bedrooms >= COALESCE(?, v.bedrooms)
             AND v.has_pets = COALESCE(?, v.has_pets)
+            AND v.id not in (
+                SELECT DISTINCT offer_id
+                FROM reservation
+                WHERE start_date < ? AND end_date > ?
+            )
             ORDER BY v.id
             LIMIT 100
             """;
@@ -43,7 +48,9 @@ public class OfferDao {
                 criteria.getAdults(),
                 criteria.getChildren(),
                 criteria.getRooms(),
-                criteria.getHasPets()
+                criteria.getHasPets(),
+                criteria.getCheckOut(),
+                criteria.getCheckIn()
         );
         List<Image> images = imageDao.searchImages();
         List<Amenity> amenities = amenityDao.searchAmenities();
