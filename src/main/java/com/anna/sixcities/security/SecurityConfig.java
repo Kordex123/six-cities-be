@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/offer/search").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/image/**").permitAll()
+                        .requestMatchers("/reservation/**").permitAll()
                         .requestMatchers("/avatar/**").hasRole("CLIENT")
                         .requestMatchers("/favorite/**").hasRole("CLIENT")
                         .anyRequest().authenticated()
