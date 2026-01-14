@@ -18,11 +18,11 @@ public class OfferService {
         return offerDao.searchOffers(criteria);
     }
 
-    public void addFavorite(Long offerId, Long userId) {
-        offerDao.addFavorite(offerId, userId);
+    public void addFavorite(Long offerId) {
+        offerDao.addFavorite(offerId);
     }
 
-    public void deleteFavorite(Long offerId, Long userId) {
-        offerDao.deleteFavorite(offerId, userId);
+    public void deleteFavorite(Long offerId) {
+        offerDao.deleteFavorite(offerId);
     }
 }

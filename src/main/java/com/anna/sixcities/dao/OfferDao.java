@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
+
 @Component
 public class OfferDao {
 
@@ -42,7 +44,7 @@ public class OfferDao {
 
     public List<Offer> searchOffers(OfferSearchCriteria criteria) {
         List<Map<String, Object>> offerMapList = jdbcTemplate.queryForList(FAVORITE_OFFER_QUERY,
-                1,
+                getCurrentUserId(),
                 criteria.getCity(),
                 criteria.getCity(),
                 criteria.getAdults(),
@@ -80,11 +82,11 @@ public class OfferDao {
         return result;
     }
 
-    public void addFavorite(Long offerId, Long userId) {
-        jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, userId);
+    public void addFavorite(Long offerId) {
+        jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, getCurrentUserId());
     }
 
-    public void deleteFavorite(Long offerId, Long userId) {
-        jdbcTemplate.update("DELETE FROM favorite WHERE offer_id = ? AND user_id = ?", offerId, userId);
+    public void deleteFavorite(Long offerId) {
+        jdbcTemplate.update("DELETE FROM favorite WHERE offer_id = ? AND user_id = ?", offerId, getCurrentUserId());
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
+
 @CrossOrigin(origins="http://localhost:5173")
 @RestController
 @RequestMapping("/offer")
@@ -23,14 +25,14 @@ public class OfferController {
     }
 
     @PostMapping("/favorite/add")
-    public Favorite addFavorite(@RequestParam Long offerId, @RequestParam Long userId) {
-        offerService.addFavorite(offerId, userId);
-        return new Favorite(offerId, userId);
+    public Favorite addFavorite(@RequestParam Long offerId) {
+        offerService.addFavorite(offerId);
+        return new Favorite(offerId, getCurrentUserId());
     }
 
     @DeleteMapping("/favorite/delete")
-    public Favorite deleteFavorite(@RequestParam Long offerId, @RequestParam Long userId) {
-        offerService.deleteFavorite(offerId, userId);
-        return new Favorite(offerId, userId);
+    public Favorite deleteFavorite(@RequestParam Long offerId) {
+        offerService.deleteFavorite(offerId);
+        return new Favorite(offerId, getCurrentUserId());
     }
  }

@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
+
 @Component
 public class ReservationDao {
 
@@ -37,7 +39,7 @@ public class ReservationDao {
     }
 
     public void addReservation(Reservation reservation) {
-        jdbcTemplate.update(RESERVATION_INSERT, 1, reservation.getOfferId(), reservation.getCheckIn(), reservation.getCheckOut());
+        jdbcTemplate.update(RESERVATION_INSERT, getCurrentUserId(), reservation.getOfferId(), reservation.getCheckIn(), reservation.getCheckOut());
     }
 
 }
