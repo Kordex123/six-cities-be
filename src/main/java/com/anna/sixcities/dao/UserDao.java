@@ -5,13 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class UserDao {
 
     private static final String USER_QUERY = """
-    SELECT * FROM app_user WHERE login = ?;
+    SELECT * FROM app_user WHERE login = ?
+    """;
+
+    private static final String PERMISSION_QUERY = """
+    SELECT * FROM permission
+    JOIN user_permission ON permission.id = user_permission.permission_id
+    WHERE user_id = ?;
     """;
 
     @Autowired
@@ -33,10 +40,17 @@ public class UserDao {
         return getUser(userMap);
     }
 
+    public List<String> getPermissionsByUserId(Long userId) {
+        List<Map<String, Object>> permissions = jdbcTemplate.queryForList(PERMISSION_QUERY, userId);
+        return permissions.stream().map(permission -> (String) permission.get("name")).toList();
+    }
+
 
     public User getUserByEmail(String email) {
         Map<String, Object> userMap = jdbcTemplate.queryForMap("SELECT * FROM app_user WHERE email = ?", email);
-        return getUser(userMap);
+        User user = getUser(userMap);
+        user.setPermissions(getPermissionsByUserId(user.getId()));
+        return user;
     }
 
     public void addUser(User user) {

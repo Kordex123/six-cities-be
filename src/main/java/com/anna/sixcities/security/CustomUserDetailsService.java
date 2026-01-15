@@ -3,15 +3,13 @@ package com.anna.sixcities.security;
 import com.anna.sixcities.dao.UserDao;
 import com.anna.sixcities.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -28,11 +26,11 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found: " + email);
         }
 
-        Collection<GrantedAuthority> authorities = Collections.singleton(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole())
-        );
+        List<SimpleGrantedAuthority> authorities = user.getPermissions().stream().map(permission ->
+                new SimpleGrantedAuthority("ROLE_" + permission)
+        ).toList();
 
-           // Zwróć CustomUserPrincipal z userId
+        // Zwróć CustomUserPrincipal z userId
         return new CustomUserPrincipal(
                 user.getId(),
                 user.getEmail(),
