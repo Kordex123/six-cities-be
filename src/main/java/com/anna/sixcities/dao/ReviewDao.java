@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
+
 @Component
 public class ReviewDao {
 
@@ -49,7 +51,7 @@ public class ReviewDao {
 
     public void addReview(Review review) {
         jdbcTemplate.update("INSERT INTO review (offer_id, user_id, description, rating) VALUES (?, ?, ?, ?)",
-                review.getOfferId(), review.getUserId(), review.getDescription(), review.getRating());
+                review.getOfferId(), getCurrentUserId(), review.getDescription(), review.getRating());
     }
 
     public void deleteReview(Long reviewId) {
