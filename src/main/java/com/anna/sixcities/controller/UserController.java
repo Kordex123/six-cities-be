@@ -1,9 +1,13 @@
 package com.anna.sixcities.controller;
 
+import com.anna.sixcities.model.Offer;
+import com.anna.sixcities.model.OfferSearchCriteria;
 import com.anna.sixcities.model.User;
 import com.anna.sixcities.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins="http://localhost:5173")
 @RestController

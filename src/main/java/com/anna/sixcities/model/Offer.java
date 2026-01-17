@@ -18,6 +18,8 @@ public class Offer {
     private List<Amenity> amenities;
     private boolean isFavorite;
     private String type;
+
+    private Long typeId;
     private Integer children;
     private boolean hasPets;
 
@@ -84,6 +86,13 @@ public class Offer {
         this.type = type;
     }
 
+    public Long getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Long typeId) {
+        this.typeId = typeId;
+    }
     public City getCity() {
         return city;
     }

@@ -3,6 +3,7 @@ package com.anna.sixcities.dao;
 import com.anna.sixcities.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -33,6 +34,14 @@ public class OfferDao {
             LIMIT 100
             """;
 
+    private static final String HOST_OFFER_QUERY = """
+            SELECT v.*,
+            FROM V_OFFER v
+            WHERE v.host_id = ?)
+            ORDER BY v.id
+            LIMIT 100
+            """;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -54,9 +63,39 @@ public class OfferDao {
                 criteria.getCheckOut(),
                 criteria.getCheckIn()
         );
+        return mapToObject(offerMapList);
+    }
+
+    public void addOffer(Offer offer) {
+        jdbcTemplate.update("""
+                    INSERT INTO offer (
+                        title, price, lat, lng, city_id, offer_type_id, rating, description,
+                        bedrooms, max_adults, children, has_pets, host_id
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, offer.getTitle(), offer.getPrice(), offer.getPosition().getLat(), offer.getPosition().getLng(),
+                offer.getCity(), offer.getTypeId(), offer.getRating(), offer.getDescription(), offer.getBedrooms(),
+                offer.getMaxAdults(), offer.getChildren(), offer.getHasPets(), getCurrentUserId());
+    }
+
+    public void addFavorite(Long offerId) {
+        jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, getCurrentUserId());
+    }
+
+    public void deleteFavorite(Long offerId) {
+        jdbcTemplate.update("DELETE FROM favorite WHERE offer_id = ? AND user_id = ?", offerId, getCurrentUserId());
+    }
+
+    public List<Offer> searchOffersForCurrentHost() {
+        List<Map<String, Object>> offerMapForHostList = jdbcTemplate.queryForList(HOST_OFFER_QUERY,
+                getCurrentUserId());
+        return mapToObject(offerMapForHostList);
+    }
+
+    @NonNull
+    private List<Offer> mapToObject(List<Map<String, Object>> offerMapForHostList) {
         List<Image> images = imageDao.searchImages();
         List<Amenity> amenities = amenityDao.searchAmenities();
-        List<Offer> result = offerMapList.stream().map(offerMap -> {
+         return offerMapForHostList.stream().map(offerMap -> {
             Offer offer = new Offer();
             offer.setId((Integer) offerMap.get("id"));
             offer.setTitle((String) offerMap.get("title"));
@@ -79,14 +118,5 @@ public class OfferDao {
             offer.setCity(offerCity);
             return offer;
         }).toList();
-        return result;
-    }
-
-    public void addFavorite(Long offerId) {
-        jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, getCurrentUserId());
-    }
-
-    public void deleteFavorite(Long offerId) {
-        jdbcTemplate.update("DELETE FROM favorite WHERE offer_id = ? AND user_id = ?", offerId, getCurrentUserId());
     }
 }

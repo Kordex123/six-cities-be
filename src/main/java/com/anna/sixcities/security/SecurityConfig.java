@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/image/**").permitAll()
                         .requestMatchers("/reservation/**").permitAll()
-                        .requestMatchers("/avatar/**").hasRole("CLIENT")
+                        .requestMatchers("/avatar/**").permitAll()
                         .requestMatchers("/favorite/**").hasRole("CLIENT")
                         .anyRequest().authenticated()
                 )
