@@ -1,8 +1,6 @@
 package com.anna.sixcities.service;
 
-import com.anna.sixcities.dao.OfferDao;
 import com.anna.sixcities.dao.UserDao;
-import com.anna.sixcities.model.Offer;
 import com.anna.sixcities.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +15,10 @@ public class UserService {
 
     public User getUserByLogin(String login) {
         return userDao.getUserByLogin(login);
+    }
+
+    public List<User> searchUsers() {
+        return userDao.searchUsers();
     }
 
     public void addUser(User user) {

@@ -1,7 +1,5 @@
 package com.anna.sixcities.controller;
 
-import com.anna.sixcities.model.Offer;
-import com.anna.sixcities.model.OfferSearchCriteria;
 import com.anna.sixcities.model.User;
 import com.anna.sixcities.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,11 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @PostMapping("/search")
+    public List<User> searchUser(@RequestBody User user) {
+        return userService.searchUsers();
+    }
 
     @GetMapping("/{login}")
     public User getUser(@PathVariable String login) {

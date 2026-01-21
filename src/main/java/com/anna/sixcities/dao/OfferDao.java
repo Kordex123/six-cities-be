@@ -35,9 +35,9 @@ public class OfferDao {
             """;
 
     private static final String HOST_OFFER_QUERY = """
-            SELECT v.*,
+            SELECT v.*
             FROM V_OFFER v
-            WHERE v.host_id = ?)
+            WHERE v.host_id = ?
             ORDER BY v.id
             LIMIT 100
             """;
@@ -108,7 +108,9 @@ public class OfferDao {
             offer.setChildren((Integer) offerMap.get("children"));
             offer.setType((String) offerMap.get("offer_type_name"));
             offer.setPreviewImage(new Image((String) offerMap.get("preview_image")));
-            offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
+            if (offerMap.containsKey("is_favorite")) {
+                offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
+            }
             offer.setHasPets((Boolean) offerMap.get("has_pets"));
             offer.setImages(images.stream().filter(image -> image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
             offer.setAmenities(amenities.stream().filter(amenity -> amenity.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());

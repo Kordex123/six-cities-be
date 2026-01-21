@@ -1,5 +1,6 @@
 package com.anna.sixcities.dao;
 
+import com.anna.sixcities.model.Review;
 import com.anna.sixcities.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,8 +22,28 @@ public class UserDao {
     WHERE user_id = ?;
     """;
 
+    private static final String USERS_QUERY = """
+    SELECT * FROM app_user
+    """;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public List<User> searchUsers() {
+
+        List<Map<String, Object>> userMapList = jdbcTemplate.queryForList(USERS_QUERY);
+        List<User> result = userMapList.stream().map(userMap -> {
+            User user = new User();
+            user.setId(((Number) userMap.get("id")).longValue());
+            user.setLogin((String) userMap.get("login"));
+            user.setPassword((String) userMap.get("password"));
+            user.setFirstName((String) userMap.get("firstName"));
+            user.setLastName((String) userMap.get("lastName"));
+            user.setEmail((String) userMap.get("email"));
+            return user;
+        }).toList();
+        return result;
+    }
 
     private static User getUser(Map<String, Object> userMap) {
         User user = new User();
