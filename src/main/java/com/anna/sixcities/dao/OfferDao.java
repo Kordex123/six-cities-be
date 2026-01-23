@@ -97,7 +97,7 @@ public class OfferDao {
         List<Amenity> amenities = amenityDao.searchAmenities();
          return offerMapForHostList.stream().map(offerMap -> {
             Offer offer = new Offer();
-            offer.setId((Integer) offerMap.get("id"));
+            offer.setId((Long) offerMap.get("id"));
             offer.setTitle((String) offerMap.get("title"));
             offer.setPrice((BigDecimal) offerMap.get("price"));
             offer.setPosition(new Position((BigDecimal) offerMap.get("lat"), (BigDecimal) offerMap.get("lng")));

@@ -37,8 +37,8 @@ public class UserDao {
             user.setId(((Number) userMap.get("id")).longValue());
             user.setLogin((String) userMap.get("login"));
             user.setPassword((String) userMap.get("password"));
-            user.setFirstName((String) userMap.get("firstName"));
-            user.setLastName((String) userMap.get("lastName"));
+            user.setFirstName((String) userMap.get("first_name"));
+            user.setLastName((String) userMap.get("last_name"));
             user.setEmail((String) userMap.get("email"));
             return user;
         }).toList();

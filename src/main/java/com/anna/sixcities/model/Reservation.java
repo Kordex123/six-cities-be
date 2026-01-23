@@ -1,13 +1,15 @@
 package com.anna.sixcities.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Reservation {
     private Long id;
-    private Long offerId;
     private Long userId;
+    private Offer offer;
     private LocalDate checkIn;
     private LocalDate checkOut;
+    private List<User> participants;
 
     public Long getId() {
         return id;
@@ -17,16 +19,12 @@ public class Reservation {
         this.id = id;
     }
 
-    public Long getOfferId() {
-        return offerId;
+    public Offer getOffer() {
+        return offer;
     }
 
-    public void setOfferId(Long offerId) {
-        this.offerId = offerId;
-    }
-
-    public Long getUserId() {
-        return userId;
+    public void setOffer(Offer offer) {
+        this.offer = offer;
     }
 
     public void setUserId(Long userId) {
@@ -47,5 +45,17 @@ public class Reservation {
 
     public void setCheckOut(LocalDate checkOut) {
         this.checkOut = checkOut;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public <E> void setParticipants(List<User> participants) {
+        this.participants = participants;
+    }
+
+    public List<User> getParticipants() {
+        return participants;
     }
 }

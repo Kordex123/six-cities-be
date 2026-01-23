@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Offer {
-    private Integer id;
+    private Long id;
     private String title;
     private BigDecimal price;
     private Position position;
@@ -25,10 +25,10 @@ public class Offer {
 
     public Offer() { }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(Integer id) {
+    public void setId(Long id) {
 
         this.id = id;
     }
@@ -138,5 +138,6 @@ public class Offer {
     public void setHasPets(boolean hasPets) {
         this.hasPets = hasPets;
     }
+
 }
 
