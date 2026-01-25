@@ -28,7 +28,7 @@ public class OfferDao {
             AND v.id not in (
                 SELECT DISTINCT offer_id
                 FROM reservation
-                WHERE start_date < ? AND end_date > ?
+                WHERE check_in < ? AND check_out > ?
             )
             ORDER BY v.id
             LIMIT 100

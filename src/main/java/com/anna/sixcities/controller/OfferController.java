@@ -12,7 +12,6 @@ import java.util.List;
 
 import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
 
-@CrossOrigin(origins="http://localhost:5173")
 @RestController
 @RequestMapping("/offer")
 public class OfferController {

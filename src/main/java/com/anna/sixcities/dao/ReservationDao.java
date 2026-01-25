@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class ReservationDao {
             """;
 
     private static final String RESERVATION_INSERT = """
-            INSERT INTO RESERVATION (USER_ID, OFFER_ID, START_DATE, END_DATE) VALUES (?, ?, ?, ?)
+            INSERT INTO RESERVATION (USER_ID, OFFER_ID, CHECK_IN, CHECK_OUT) VALUES (?, ?, ?, ?)
             """;
 
     @Autowired
@@ -60,8 +59,8 @@ public class ReservationDao {
             reservation.setParticipants(List.of(user));
 
             reservation.setUserId((Long) dbRow.get("user_id"));
-            reservation.setCheckIn(objectToLocalDate(dbRow.get("start_date")));
-            reservation.setCheckOut(objectToLocalDate(dbRow.get("end_date")));
+            reservation.setCheckIn(objectToLocalDate(dbRow.get("check_in")));
+            reservation.setCheckOut(objectToLocalDate(dbRow.get("check_out")));
             return reservation;
         }).toList();
     }
