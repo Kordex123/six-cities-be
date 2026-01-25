@@ -1,5 +1,6 @@
 package com.anna.sixcities.controller;
 
+import com.anna.sixcities.model.OffersByType;
 import com.anna.sixcities.model.ReservationsByMonth;
 import com.anna.sixcities.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,10 @@ public class ReportController {
     @PostMapping("/search/reservation-count")
     public List<ReservationsByMonth> searchReservationsByMonth() {
         return reportService.searchReservationsByMonth();
+    }
+
+    @PostMapping("/search/offer-count")
+    public List<OffersByType> searchOffersByType() {
+        return reportService.searchOffersByType();
     }
 }

@@ -1,5 +1,6 @@
 package com.anna.sixcities.dao;
 
+import com.anna.sixcities.model.OffersByType;
 import com.anna.sixcities.model.ReservationsByMonth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +29,17 @@ public class ReportDao {
                     ORDER BY year ASC, month ASC
             """;
 
+    private static final String OFFERS_BY_TYPE_QUERY = """
+                    SELECT
+                        offer_type_id,
+                        offer_type.name AS offer_type_name,
+                        COUNT(*) AS count
+                    FROM offer
+                    JOIN offer_type ON offer.offer_type_id = offer_type.id
+                    GROUP BY offer_type_id, offer_type_name
+                    ORDER BY offer_type_id
+            """;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -38,6 +50,16 @@ public class ReportDao {
             reservationsByMonth.setMonth((String) dbRow.get("month_name"));
             reservationsByMonth.setCount((Long) dbRow.get("count"));
             return reservationsByMonth;
+        }).toList();
+    }
+
+    public List<OffersByType> searchOffersByType() {
+        List<Map<String, Object>> dbRowList = jdbcTemplate.queryForList(OFFERS_BY_TYPE_QUERY);
+        return dbRowList.stream().map(dbRow -> {
+            OffersByType offersByType = new OffersByType();
+            offersByType.setOfferType((String) dbRow.get("offer_type_name"));
+            offersByType.setCount((Long) dbRow.get("count"));
+            return offersByType;
         }).toList();
     }
 }
