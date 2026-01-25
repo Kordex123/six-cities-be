@@ -2,6 +2,7 @@ package com.anna.sixcities.dao;
 
 import com.anna.sixcities.model.OffersByType;
 import com.anna.sixcities.model.ReservationsByMonth;
+import com.anna.sixcities.model.ReviewsByRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,15 @@ public class ReportDao {
                     ORDER BY offer_type_id
             """;
 
+    private static final String REVIEWS_BY_RATING_QUERY = """
+                    SELECT
+                        rating,
+                        COUNT(*) AS count
+                    FROM review
+                    GROUP BY rating
+                    ORDER BY rating
+            """;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -60,6 +70,16 @@ public class ReportDao {
             offersByType.setOfferType((String) dbRow.get("offer_type_name"));
             offersByType.setCount((Long) dbRow.get("count"));
             return offersByType;
+        }).toList();
+    }
+
+       public List<ReviewsByRating> searchReviewByRating() {
+        List<Map<String, Object>> dbRowList = jdbcTemplate.queryForList(REVIEWS_BY_RATING_QUERY);
+        return dbRowList.stream().map(dbRow -> {
+            ReviewsByRating reviewsByRating = new ReviewsByRating();
+            reviewsByRating.setRating((Integer) dbRow.get("rating"));
+            reviewsByRating.setCount((Long) dbRow.get("count"));
+            return reviewsByRating;
         }).toList();
     }
 }
