@@ -1,5 +1,6 @@
 package com.anna.sixcities.dao;
 
+import com.anna.sixcities.model.IncomeByMonth;
 import com.anna.sixcities.model.OffersByType;
 import com.anna.sixcities.model.ReservationsByMonth;
 import com.anna.sixcities.model.ReviewsByRating;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +52,25 @@ public class ReportDao {
                     ORDER BY rating
             """;
 
-    @Autowired
+    private static final String INCOME_BY_MONTH = """
+                    SELECT
+                        month_name, sum
+                    FROM (
+                        SELECT
+                            EXTRACT(YEAR FROM check_in) AS year,
+                            EXTRACT(MONTH FROM check_in) AS month,
+                            TO_CHAR(check_in, 'Mon') AS month_name,
+                            SUM(price) AS sum
+                        FROM reservation
+                        JOIN OFFER ON reservation.offer_id = offer.id
+                        GROUP BY year, month, month_name
+                        ORDER BY year DESC, month DESC
+                        LIMIT 12
+                    )
+                    ORDER BY year ASC, month ASC
+            """;
+
+     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     public List<ReservationsByMonth> searchReservationsByMonth() {
@@ -73,13 +93,23 @@ public class ReportDao {
         }).toList();
     }
 
-       public List<ReviewsByRating> searchReviewByRating() {
+    public List<ReviewsByRating> searchReviewByRating() {
         List<Map<String, Object>> dbRowList = jdbcTemplate.queryForList(REVIEWS_BY_RATING_QUERY);
         return dbRowList.stream().map(dbRow -> {
             ReviewsByRating reviewsByRating = new ReviewsByRating();
             reviewsByRating.setRating((Integer) dbRow.get("rating"));
             reviewsByRating.setCount((Long) dbRow.get("count"));
             return reviewsByRating;
+        }).toList();
+    }
+
+    public List<IncomeByMonth> searchIncomeByMonth() {
+        List<Map<String, Object>> dbRowList = jdbcTemplate.queryForList(INCOME_BY_MONTH);
+        return dbRowList.stream().map(dbRow -> {
+            IncomeByMonth incomeByMonth = new IncomeByMonth();
+            incomeByMonth.setIncome((BigDecimal) dbRow.get("sum"));
+            incomeByMonth.setMonth((String) dbRow.get("month_name"));
+            return incomeByMonth;
         }).toList();
     }
 }

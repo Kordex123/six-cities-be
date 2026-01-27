@@ -1,5 +1,6 @@
 package com.anna.sixcities.controller;
 
+import com.anna.sixcities.model.IncomeByMonth;
 import com.anna.sixcities.model.OffersByType;
 import com.anna.sixcities.model.ReservationsByMonth;
 import com.anna.sixcities.model.ReviewsByRating;
@@ -31,5 +32,10 @@ public class ReportController {
     @PostMapping("/search/review-count")
     public List<ReviewsByRating> searchReviewsByRating() {
         return reportService.searchReviewsByRating();
+    }
+
+    @PostMapping("/search/income-sum")
+    public List<IncomeByMonth> searchIncomeByMonth() {
+        return reportService.searchIncomeByMonth();
     }
 }
