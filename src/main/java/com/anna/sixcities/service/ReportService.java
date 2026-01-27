@@ -1,10 +1,7 @@
 package com.anna.sixcities.service;
 
 import com.anna.sixcities.dao.ReportDao;
-import com.anna.sixcities.model.IncomeByMonth;
-import com.anna.sixcities.model.OffersByType;
-import com.anna.sixcities.model.ReservationsByMonth;
-import com.anna.sixcities.model.ReviewsByRating;
+import com.anna.sixcities.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +31,10 @@ public class ReportService {
 
     public List<OffersByType> searchOffersByType() {
         return reportDao.searchOffersByType();
+    }
+
+    public List<OffersByBedrooms> searchOffersByBedrooms() {
+        return reportDao.searchOffersByBedrooms();
     }
 
 }

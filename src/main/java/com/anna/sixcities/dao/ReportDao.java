@@ -1,9 +1,6 @@
 package com.anna.sixcities.dao;
 
-import com.anna.sixcities.model.IncomeByMonth;
-import com.anna.sixcities.model.OffersByType;
-import com.anna.sixcities.model.ReservationsByMonth;
-import com.anna.sixcities.model.ReviewsByRating;
+import com.anna.sixcities.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -70,7 +67,16 @@ public class ReportDao {
                     ORDER BY year ASC, month ASC
             """;
 
-     @Autowired
+    private static final String OFFERS_BY_BEDROOMS = """
+                    SELECT
+                        bedrooms,
+                         COUNT(*) AS count
+                    FROM offer
+                    GROUP BY bedrooms
+                    ORDER BY bedrooms ASC
+            """;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     public List<ReservationsByMonth> searchReservationsByMonth() {
@@ -112,4 +118,17 @@ public class ReportDao {
             return incomeByMonth;
         }).toList();
     }
+
+    public List<OffersByBedrooms> searchOffersByBedrooms() {
+        List<Map<String, Object>> dbRowList = jdbcTemplate.queryForList(OFFERS_BY_BEDROOMS);
+        return dbRowList.stream().map(dbRow -> {
+            OffersByBedrooms offersByBedrooms = new OffersByBedrooms();
+            offersByBedrooms.setBedrooms((Integer) dbRow.get("bedrooms"));
+            offersByBedrooms.setCount((Long) dbRow.get("count"));
+            return offersByBedrooms;
+        }).toList();
+    }
+
+
+
 }

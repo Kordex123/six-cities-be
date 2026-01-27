@@ -112,8 +112,8 @@ public class OfferDao {
                 offer.setIsFavorite(((Integer) offerMap.get("is_favorite")) == 1);
             }
             offer.setHasPets((Boolean) offerMap.get("has_pets"));
-            offer.setImages(images.stream().filter(image -> image.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
-            offer.setAmenities(amenities.stream().filter(amenity -> amenity.getOfferId().intValue() == (Integer) offerMap.get("id")).toList());
+            offer.setImages(images.stream().filter(image -> image.getOfferId().equals(offerMap.get("id"))).toList());
+            offer.setAmenities(amenities.stream().filter(amenity -> amenity.getOfferId().equals(offerMap.get("id"))).toList());
             City offerCity = new City();
             offerCity.setTitle((String) offerMap.get("city_title"));
             offerCity.setId((Long) offerMap.get("city_id"));

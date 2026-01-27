@@ -1,9 +1,6 @@
 package com.anna.sixcities.controller;
 
-import com.anna.sixcities.model.IncomeByMonth;
-import com.anna.sixcities.model.OffersByType;
-import com.anna.sixcities.model.ReservationsByMonth;
-import com.anna.sixcities.model.ReviewsByRating;
+import com.anna.sixcities.model.*;
 import com.anna.sixcities.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,4 +35,10 @@ public class ReportController {
     public List<IncomeByMonth> searchIncomeByMonth() {
         return reportService.searchIncomeByMonth();
     }
+
+    @PostMapping("/search/offers-count-by-bedrooms")
+    public List<OffersByBedrooms> searchOffersByBedrooms() {
+        return reportService.searchOffersByBedrooms();
+    }
+
 }
