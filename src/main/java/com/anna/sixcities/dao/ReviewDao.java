@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -15,35 +16,66 @@ import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
 @Component
 public class ReviewDao {
 
+    private static String REVIEW_QUERY = """
+            SELECT 
+                APP_USER.ID AS USER_ID,
+                OFFER.ID AS OFFER_ID,
+                REVIEW.*,
+                OFFER.*,
+                APP_USER.*
+            FROM REVIEW
+            JOIN OFFER ON REVIEW.OFFER_ID = OFFER.ID
+            JOIN APP_USER ON APP_USER.ID = REVIEW.USER_ID
+            WHERE 1 = 1
+        """;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     public List<Review> searchReview(Review reviewFilter) {
-        String query = "SELECT * FROM REVIEW WHERE 1 = 1";
+
         if (reviewFilter.getId() != null) {
-            query += " AND ID = " + reviewFilter.getId();
+            REVIEW_QUERY += " AND ID = " + reviewFilter.getId();
         }
         if (reviewFilter.getOfferId() != null) {
-            query += " AND OFFER_ID = " + reviewFilter.getOfferId();
+            REVIEW_QUERY += " AND OFFER_ID = " + reviewFilter.getOfferId();
         }
         if (reviewFilter.getUserId() != null) {
-            query += " AND USER_ID = " + reviewFilter.getUserId();
+            REVIEW_QUERY += " AND USER_ID = " + reviewFilter.getUserId();
         }
         if (reviewFilter.getDescription() != null) {
-            query += " AND DESCRIPTION LIKE '%" + reviewFilter.getDescription() + "%'";
+            REVIEW_QUERY += " AND DESCRIPTION LIKE '%" + reviewFilter.getDescription() + "%'";
         }
         if (reviewFilter.getRating() != null) {
-            query += " AND RATING = " + reviewFilter.getRating();
+            REVIEW_QUERY += " AND RATING = " + reviewFilter.getRating();
         }
 
-        List<Map<String, Object>> reviewMapList = jdbcTemplate.queryForList(query);
+        List<Map<String, Object>> reviewMapList = jdbcTemplate.queryForList(REVIEW_QUERY);
         List<Review> result = reviewMapList.stream().map(reviewMap -> {
             Review review = new Review();
+            User user = new User();
+            Offer offer = new Offer();
+
             review.setId(((Number) reviewMap.get("id")).longValue());
             review.setOfferId((Long) reviewMap.get("offer_id"));
             review.setUserId((Long) reviewMap.get("user_id"));
             review.setDescription((String) reviewMap.get("description"));
             review.setRating((Integer) reviewMap.get("rating"));
+            Timestamp timestamp = (Timestamp) reviewMap.get("creation_date");
+            review.setCreationDate(timestamp != null ? timestamp.toLocalDateTime(): null);
+
+            user.setId(((Number) reviewMap.get("user_id")).longValue());
+            user.setFirstName((String) reviewMap.get("first_name"));
+            user.setLastName((String) reviewMap.get("last_name"));
+            user.setEmail((String) reviewMap.get("email"));
+            user.setLogin((String) reviewMap.get("login"));
+
+            offer.setId(((Number) reviewMap.get("offer_id")).longValue());
+            offer.setTitle((String) reviewMap.get("title"));
+
+            review.setUser(user);
+            review.setOffer(offer);
+
             return review;
         }).toList();
         return result;
