@@ -16,7 +16,7 @@ import static com.anna.sixcities.util.SecurityUtil.getCurrentUserId;
 @Component
 public class ReviewDao {
 
-    private static String REVIEW_QUERY = """
+    public static final String REVIEW_QUERY = """
             SELECT 
                 APP_USER.ID AS USER_ID,
                 OFFER.ID AS OFFER_ID,
@@ -33,24 +33,25 @@ public class ReviewDao {
     private JdbcTemplate jdbcTemplate;
 
     public List<Review> searchReview(Review reviewFilter) {
+        String sql = REVIEW_QUERY;
 
         if (reviewFilter.getId() != null) {
-            REVIEW_QUERY += " AND ID = " + reviewFilter.getId();
+            sql += " AND ID = " + reviewFilter.getId();
         }
         if (reviewFilter.getOfferId() != null) {
-            REVIEW_QUERY += " AND OFFER_ID = " + reviewFilter.getOfferId();
+            sql += " AND OFFER_ID = " + reviewFilter.getOfferId();
         }
         if (reviewFilter.getUserId() != null) {
-            REVIEW_QUERY += " AND USER_ID = " + reviewFilter.getUserId();
+            sql += " AND USER_ID = " + reviewFilter.getUserId();
         }
         if (reviewFilter.getDescription() != null) {
-            REVIEW_QUERY += " AND DESCRIPTION LIKE '%" + reviewFilter.getDescription() + "%'";
+            sql += " AND DESCRIPTION LIKE '%" + reviewFilter.getDescription() + "%'";
         }
         if (reviewFilter.getRating() != null) {
-            REVIEW_QUERY += " AND RATING = " + reviewFilter.getRating();
+            sql += " AND RATING = " + reviewFilter.getRating();
         }
 
-        List<Map<String, Object>> reviewMapList = jdbcTemplate.queryForList(REVIEW_QUERY);
+        List<Map<String, Object>> reviewMapList = jdbcTemplate.queryForList(sql);
         List<Review> result = reviewMapList.stream().map(reviewMap -> {
             Review review = new Review();
             User user = new User();

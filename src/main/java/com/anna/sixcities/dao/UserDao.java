@@ -40,6 +40,8 @@ public class UserDao {
             user.setFirstName((String) userMap.get("first_name"));
             user.setLastName((String) userMap.get("last_name"));
             user.setEmail((String) userMap.get("email"));
+
+            user.setPermissions(getPermissionsByUserId(user.getId()));
             return user;
         }).toList();
         return result;
