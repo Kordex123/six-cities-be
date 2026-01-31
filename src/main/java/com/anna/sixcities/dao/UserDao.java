@@ -1,6 +1,5 @@
 package com.anna.sixcities.dao;
 
-import com.anna.sixcities.model.Review;
 import com.anna.sixcities.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,7 +40,7 @@ public class UserDao {
             user.setLastName((String) userMap.get("last_name"));
             user.setEmail((String) userMap.get("email"));
 
-            user.setPermissions(getPermissionsByUserId(user.getId()));
+            user.setPermissions(getPermissionsNamesByUserId(user.getId()));
             return user;
         }).toList();
         return result;
@@ -58,9 +57,37 @@ public class UserDao {
         return user;
     }
 
+    public void updateUserPermissions(User user) {
+        // 1. Usuń uprawnienia których nie ma w user.getPermissions()
+        String deleteSql = """
+        DELETE FROM user_permission
+        WHERE user_id = ?
+        AND permission_id NOT IN (
+            SELECT id FROM permission WHERE name = ANY(?)
+        )
+        """;
+
+        // 2. Dodaj brakujące uprawnienia
+        String insertSql = """
+        INSERT INTO user_permission (user_id, permission_id)
+        SELECT ?, id FROM permission WHERE name = ANY(?)
+        ON CONFLICT (user_id, permission_id) DO NOTHING
+        """;
+
+        String[] permissions = user.getPermissions().toArray(new String[0]);
+
+        jdbcTemplate.update(deleteSql, user.getId(), permissions);
+        jdbcTemplate.update(insertSql, user.getId(), permissions);
+    }
+
     public User getUserByLogin(String login) {
         Map<String, Object> userMap = jdbcTemplate.queryForMap(USER_QUERY, login);
         return getUser(userMap);
+    }
+
+    public List<String> getPermissionsNamesByUserId(Long userId) {
+        List<Map<String, Object>> permissions = jdbcTemplate.queryForList(PERMISSION_QUERY, userId);
+        return permissions.stream().map(permission -> (String) permission.get("name")).toList();
     }
 
     public List<String> getPermissionsByUserId(Long userId) {
@@ -72,7 +99,7 @@ public class UserDao {
     public User getUserByEmail(String email) {
         Map<String, Object> userMap = jdbcTemplate.queryForMap("SELECT * FROM app_user WHERE email = ?", email);
         User user = getUser(userMap);
-        user.setPermissions(getPermissionsByUserId(user.getId()));
+        user.setPermissions(getPermissionsNamesByUserId(user.getId()));
         return user;
     }
 
@@ -86,9 +113,10 @@ public class UserDao {
     }
 
     public void updateUser(User user) {
-        jdbcTemplate.update("UPDATE app_user SET LOGIN = ?, PASSWORD = ?, EMAIL = ?, FIRSTNAME = ?, LASTNAME = ? WHERE ID = ?",
+        jdbcTemplate.update("UPDATE app_user SET login = ?, password = ?, email = ?, first_name = ?, last_name = ? WHERE ID = ?",
                 user.getLogin(), user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getId());
 
+        updateUserPermissions(user);
     }
 
 }
