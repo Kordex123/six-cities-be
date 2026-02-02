@@ -1,6 +1,7 @@
+-- auto-generated definition
 create table offer
 (
-    id            integer not null
+    id            bigint not null
         primary key,
     title         text,
     price         numeric(10, 2),
@@ -12,8 +13,15 @@ create table offer
     offer_type_id bigint
         constraint offer_offer_type_id_fk
             references offer_type,
-    rating        smallint,
+    rating        numeric,
     description   text,
     bedrooms      smallint,
-    max_adults    smallint
+    max_adults    smallint,
+    children      smallint,
+    has_pets      boolean,
+    host_id       integer
 );
+
+alter table offer
+    owner to postgres;
+

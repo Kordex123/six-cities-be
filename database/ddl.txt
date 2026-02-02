@@ -35,30 +35,7 @@
     alter table offer_type
     owner to postgres;
 
-    create table offer
-    (
-    id            integer not null
-    primary key,
-    title         text,
-    price         numeric(10, 2),
-    lat           numeric(10, 6),
-    lng           numeric(10, 6),
-    city_id       bigint
-    constraint city_id
-    references city,
-    offer_type_id bigint
-    constraint offer_offer_type_id_fk
-    references offer_type,
-    rating        bigint,
-    description   text,
-    bedrooms      smallint,
-    max_adults    smallint
-    );
-
-    alter table offer
-    owner to postgres;
-
-    create table "user"
+   create table "user"
     (
     id       bigserial
     primary key,

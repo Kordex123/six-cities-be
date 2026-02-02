@@ -31,7 +31,7 @@ public class OfferDao {
                 WHERE check_in < ? AND check_out > ?
             )
             ORDER BY v.id
-            LIMIT 100
+            LIMIT 1000
             """;
 
     private static final String HOST_OFFER_QUERY = """
@@ -39,7 +39,7 @@ public class OfferDao {
             FROM V_OFFER v
             WHERE v.host_id = ?
             ORDER BY v.id
-            LIMIT 100
+            LIMIT 1000
             """;
 
     @Autowired
@@ -71,9 +71,11 @@ public class OfferDao {
                     INSERT INTO offer (
                         title, price, lat, lng, city_id, offer_type_id, rating, description,
                         bedrooms, max_adults, children, has_pets, host_id
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?,
+                              (SELECT ID FROM city WHERE title = ?),
+                              ?, ?, ?, ?, ?, ?, ?, ?)
                 """, offer.getTitle(), offer.getPrice(), offer.getPosition().getLat(), offer.getPosition().getLng(),
-                offer.getCity(), offer.getTypeId(), offer.getRating(), offer.getDescription(), offer.getBedrooms(),
+                offer.getCity().getTitle(), offer.getTypeId(), offer.getRating(), offer.getDescription(), offer.getBedrooms(),
                 offer.getMaxAdults(), offer.getChildren(), offer.getHasPets(), getCurrentUserId());
     }
 
