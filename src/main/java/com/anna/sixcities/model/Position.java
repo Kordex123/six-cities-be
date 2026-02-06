@@ -1,7 +1,10 @@
 package com.anna.sixcities.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Position {
     private BigDecimal lat;
     private BigDecimal lng;

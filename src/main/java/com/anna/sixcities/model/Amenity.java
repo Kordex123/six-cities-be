@@ -1,5 +1,8 @@
 package com.anna.sixcities.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Amenity {
     private Long id;
     private String name;

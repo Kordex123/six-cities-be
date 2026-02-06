@@ -1,8 +1,11 @@
 package com.anna.sixcities.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Offer {
     private Long id;
     private String title;

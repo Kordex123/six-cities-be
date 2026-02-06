@@ -35,6 +35,12 @@ public class OfferController {
         return offer;
     }
 
+    @PostMapping("/update")
+    public Offer updateOffer(@RequestBody Offer offer) {
+        offerService.updateOffer(offer);
+        return offer;
+    }
+
     @PostMapping("/favorite/add")
     public Favorite addFavorite(@RequestParam Long offerId) {
         offerService.addFavorite(offerId);

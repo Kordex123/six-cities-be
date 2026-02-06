@@ -78,6 +78,17 @@ public class OfferDao {
                 offer.getCity().getTitle(), offer.getTypeId(), offer.getRating(), offer.getDescription(), offer.getBedrooms(),
                 offer.getMaxAdults(), offer.getChildren(), offer.getHasPets(), getCurrentUserId());
     }
+    public void updateOffer(Offer offer) {
+        jdbcTemplate.update("""
+                    UPDATE offer SET title = ?, price = ?, lat = ?, lng = ?,
+                                     city_id = (SELECT ID FROM city WHERE title = ?),
+                      offer_type_id = ?, rating = ?, description = ?, bedrooms = ?, max_adults = ?,
+                      children = ?, has_pets = ? WHERE ID = ?
+                """, offer.getTitle(), offer.getPrice(), offer.getPosition().getLat(), offer.getPosition().getLng(),
+                offer.getCity().getTitle(), offer.getTypeId(), offer.getRating(), offer.getDescription(), offer.getBedrooms(), offer.getMaxAdults(), offer.getChildren(), offer.getHasPets(), offer.getId());
+    }
+
+
 
     public void addFavorite(Long offerId) {
         jdbcTemplate.update("INSERT INTO favorite (offer_id, user_id) VALUES (?, ?)", offerId, getCurrentUserId());

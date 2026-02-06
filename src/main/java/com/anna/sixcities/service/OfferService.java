@@ -24,6 +24,10 @@ public class OfferService {
         offerDao.addOffer(offer);
     }
 
+    public void updateOffer(Offer offer) {
+        offerDao.updateOffer(offer);
+    }
+
     public List<Offer> searchOffersForCurrentHost() {
         return offerDao.searchOffersForCurrentHost();
     }
