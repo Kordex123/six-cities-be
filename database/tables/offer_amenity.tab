@@ -1,0 +1,15 @@
+-- auto-generated definition
+create table offer_amenity
+(
+    offer_id   bigint not null
+        references offer
+            on delete cascade,
+    amenity_id bigint not null
+        references amenity
+            on delete cascade,
+    unique (offer_id, amenity_id)
+);
+
+alter table offer_amenity
+    owner to postgres;
+

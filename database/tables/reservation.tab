@@ -1,0 +1,18 @@
+-- auto-generated definition
+create table reservation
+(
+    id        bigserial
+        primary key,
+    offer_id  bigint not null
+        references offer
+            on delete cascade,
+    user_id   bigint not null
+        references app_user
+            on delete cascade,
+    check_in  date   not null,
+    check_out date   not null
+);
+
+alter table reservation
+    owner to postgres;
+

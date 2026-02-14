@@ -1,0 +1,15 @@
+-- auto-generated definition
+create table favorite
+(
+    offer_id bigint not null
+        references offer
+            on delete cascade,
+    user_id  bigint not null
+        references app_user
+            on delete cascade,
+    unique (offer_id, user_id)
+);
+
+alter table favorite
+    owner to postgres;
+

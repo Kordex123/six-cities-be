@@ -1,7 +1,7 @@
 -- auto-generated definition
 create table offer
 (
-    id            bigint not null
+    id            bigint default nextval('offer_id_seq'::regclass) not null
         primary key,
     title         text,
     price         numeric(10, 2),

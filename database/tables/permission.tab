@@ -1,0 +1,11 @@
+-- auto-generated definition
+create table permission
+(
+    id   bigserial
+        primary key,
+    name varchar(100) not null
+);
+
+alter table permission
+    owner to postgres;
+

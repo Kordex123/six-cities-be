@@ -1,0 +1,21 @@
+-- auto-generated definition
+create table review
+(
+    id            bigserial
+        primary key,
+    offer_id      bigint  not null
+        references offer
+            on delete cascade,
+    user_id       bigint  not null
+        references app_user
+            on delete cascade,
+    description   text,
+    rating        integer not null
+        constraint review_rating_check
+            check ((rating >= 1) AND (rating <= 5)),
+    creation_date timestamp
+);
+
+alter table review
+    owner to postgres;
+

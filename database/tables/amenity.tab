@@ -1,0 +1,11 @@
+-- auto-generated definition
+create table amenity
+(
+    id   bigserial
+        primary key,
+    name varchar(255) not null
+);
+
+alter table amenity
+    owner to postgres;
+

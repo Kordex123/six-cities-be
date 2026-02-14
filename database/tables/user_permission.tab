@@ -14,3 +14,4 @@ create table user_permission
 
 alter table user_permission
     owner to postgres;
+

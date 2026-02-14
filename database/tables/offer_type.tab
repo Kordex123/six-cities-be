@@ -1,0 +1,11 @@
+-- auto-generated definition
+create table offer_type
+(
+    id   bigserial
+        primary key,
+    name varchar(100) not null
+);
+
+alter table offer_type
+    owner to postgres;
+

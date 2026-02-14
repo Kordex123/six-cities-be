@@ -1,0 +1,14 @@
+-- auto-generated definition
+create table city
+(
+    id    bigserial
+        primary key,
+    lat   numeric(10, 8) not null,
+    lng   numeric(11, 8) not null,
+    zoom  integer        not null,
+    title varchar(255)
+);
+
+alter table city
+    owner to postgres;
+
